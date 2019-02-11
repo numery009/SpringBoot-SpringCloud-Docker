@@ -176,22 +176,31 @@
 
 # bootstrap.properties--
 
---To fetch the properties from the Config Server we need to change
---the name of properties file from application.properties to bootstrap.properties 
+-- To fetch the properties from the Config Server we need to change
+-- the name of properties file from application.properties to bootstrap.properties 
+
+-- Application Name
+spring.application.name=customer-service-mysql
+
+Default port 8080 for any Boot Service
+server.port=8080
 
 
---Application Name : spring.application.name=customer-service-mysql
+-Register this Micro-Service in the Eureka naming Server
+-We need to provide the URL of Eureka Server which is running in the local machine
+-eureka.client.serviceUrl.defaultZone=http://localhost:8761
 
---Default port 8080 for any Boot Service : server.port=8080
+connection to the Spring Cloud Config which is running in the local machine
+-pring.cloud.config.uri=http://localhost:8888
 
+- We need to provide the URL of Eureka Server which is running in the Docker Container
+eureka.client.serviceUrl.defaultZone=http://netflix-eureka-naming-server:8761/eureka/
 
---Register this Micro-Service in the Eureka naming Server. We need to provide the URL of Eureka Server: eureka.client.service-url.default-zone=http://localhost:8761/eureka
+-connection to the Spring Cloud Config which is running in the Docker Container
+spring.cloud.config.uri=http://spring-cloud-config-server:8888
 
-
-
-
---connection to the Spring Cloud Config: spring.cloud.config.uri=http://localhost:8888
---configure the profile: spring.profiles.active=dev
+-configure the profile
+spring.profiles.active=dev
 
 
 
