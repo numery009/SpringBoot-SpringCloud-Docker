@@ -176,26 +176,23 @@
 
 # Properties
 
--- Application Name: spring.application.name=customer-account-mysql
+spring.application.name=customer-account-mysql
+server.port=8100
 
--- Application Port: server.port=8100
+# We do not need to provide all the Ribbon List of servers URL if we register the Micro Service in the Eureka Naming Server 
+# Add the URL of the Consuming Micro Service we need to add the property here 
+# customer-service-mysql.ribbon.listOfServers=http://localhost:8080, http://localhost:8081
 
+# Register this Micro-Service in the Eureka naming Server
+# We need to provide the URL of Eureka Server for localhost
+# eureka.client.service-url.default-zone=http://localhost:8761
 
--- We do not need to provide all the Ribbon List of servers URL if we register the Micro Service in the Eureka Naming Server 
--- Add the URL of the Consuming Micro Service we need to add the property here 
--- customer-service-mysql.ribbon.listOfServers=http://localhost:8080, http://localhost:8081
+# We need to provide the URL of Eureka Server for Docker Container Name
+#eureka.client.service-url.default-zone=http://netflix-eureka-naming-server:8761
+eureka.client.serviceUrl.defaultZone=http://netflix-eureka-naming-server:8761/eureka/
 
-
--- Register this Micro-Service in the Eureka naming Server. We need to provide the URL of Eureka Server : 
-
-eureka.client.service-url.default-zone=http://localhost:8761/eureka
-
-
--- Following are the properties of Micro-Services: 
-
+# Following are the properties of Micro-Services
 customer.accountNumber=100234765360
-
 customer.accountType=true
-
 customer.creditAmount=5000000.00
 
