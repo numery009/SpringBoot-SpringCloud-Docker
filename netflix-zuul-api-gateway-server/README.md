@@ -20,7 +20,6 @@ Main method we need to add the @EnableZuulProxy, @EnableDiscoveryClient and Add 
 
 # POM File
 
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -112,6 +111,50 @@ Main method we need to add the @EnableZuulProxy, @EnableDiscoveryClient and Add 
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.28.0</version>
+
+				<configuration>
+					<!-- <dockerHost>http://127.0.0.1:2375</dockerHost> -->
+					<dockerHost>unix:///var/run/docker.sock</dockerHost>
+					<!-- this is for Mac and Amazon Linux -->
+					<!-- <dockerHost>unix:///var/run/docker.sock</dockerHost> -->
+
+					<verbose>true</verbose>
+
+					<!-- Needed if pushing to DockerHub: preferred to store these in local 
+						environment (see the course) -->
+					<!-- <authConfig> <username>YOUR-USERNAME</username> <password>YOUR-PASSWORD</password> 
+						</authConfig> -->
+
+					<images>
+						<image>
+							<name>netflix-zuul-api-gateway-server</name>
+							<build>
+								<dockerFileDir>${project.basedir}/src/main/docker/</dockerFileDir>
+
+								<!--copies Jar to the maven directory (uses Assembly system) -->
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<tags>
+									<tag>latest</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -158,10 +201,26 @@ Main method we need to add the @EnableZuulProxy, @EnableDiscoveryClient and Add 
 
 # Application Properties
 
---Name of the Application: spring.application.name=netflix-zuul-api-gateway-server
+-- Name of the Application
+spring.application.name=netflix-zuul-api-gateway-server
+-- Port of the Server
+server.port=8765
 
---Port of the Server: server.port=8765
+-- Register the Zuul API Server in the Eureka naming Server in the local machine
+#eureka.client.serviceUrl.defaultZone=http://localhost:8761
 
---Register the Zuul API Server in the Eureka naming Server: 
-eureka.client.service-url.default-zone=http://localhost:8761/eureka
+-- Register the Zuul API Server in the Eureka naming Server in the Docker Container
+eureka.client.serviceUrl.defaultZone=http://netflix-eureka-naming-server:8761/eureka/
 
+
+# Docker File
+
+FROM openjdk:8u181-jdk-stretch
+
+MAINTAINER Numery Zaber "support@softwaredeveloper.com"
+
+EXPOSE 8765
+
+COPY maven/netflix-zuul-api-gateway-server-0.0.1-SNAPSHOT.jar netflix-zuul-api-gateway-server.jar 
+
+CMD ["java","-jar","netflix-zuul-api-gateway-server.jar"]
