@@ -171,14 +171,27 @@
 
 # Properties File
 
---Name of the Naming Server: spring.application.name=netflix-eureka-naming-server
+-- Name of the Naming Server
+spring.application.name=netflix-eureka-naming-server
+-- Default port of the naming server
+server.port=8761
+-- Don't want to Server itselt to Register on the Naming Server
+eureka.client.register-with-eureka=false
+-- Don't want to fetching a Registry
+eureka.client.fetch-registry=false
 
---Default port of the naming server: server.port=8761
 
---Don't want to Server itselt to Register on the Naming Server: eureka.client.register-with-eureka=false
+# Docker File
 
---Don't want to fetching a Registry: eureka.client.fetch-registry=false
+FROM openjdk:8u181-jdk-stretch
 
+MAINTAINER Numery Zaber "support@softwaredeveloper.com"
+
+EXPOSE 8761
+
+COPY maven/netflix-eureka-naming-server-0.0.1-SNAPSHOT.jar netflix-eureka-naming-server.jar 
+
+CMD ["java","-jar","netflix-eureka-naming-server.jar"]
 
 
 
