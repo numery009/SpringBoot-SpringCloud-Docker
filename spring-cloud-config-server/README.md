@@ -18,11 +18,12 @@ Spring Cloud Config Server uses to maintain the celtralize the Configuration. Fo
 POM File--
 
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.in28minutes.microservices</groupId>
+	<groupId>com.microservices.springcloudconfigserver</groupId>
 	<artifactId>spring-cloud-config-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -35,7 +36,7 @@ POM File--
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<!-- <version>2.1.0.M2</version> -->
 		<version>2.1.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -57,15 +58,18 @@ POM File--
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-				
+
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-bus-amqp</artifactId> 
+			</dependency> -->
+
 		<!-- we have to use the rabbit amqp to come up the reflection -->
-		<!-- to all the micro services  on production time-->		
+		<!-- to all the micro services on production time -->
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
 		</dependency>
 		<!-- End -->
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -91,9 +95,53 @@ POM File--
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.28.0</version>
+
+				<configuration>
+					<!-- <dockerHost>http://127.0.0.1:2375</dockerHost> -->
+					<dockerHost>unix:///var/run/docker.sock</dockerHost>
+					<!-- this is for Mac and Amazon Linux -->
+					<!-- <dockerHost>unix:///var/run/docker.sock</dockerHost> -->
+
+					<verbose>true</verbose>
+
+					<!-- Needed if pushing to DockerHub: preferred to store these in local 
+						environment (see the course) -->
+					<!-- <authConfig> <username>YOUR-USERNAME</username> <password>YOUR-PASSWORD</password> 
+						</authConfig> -->
+
+					<images>
+						<image>
+							<name>spring-cloud-config-server</name>
+							<build>
+								<dockerFileDir>${project.basedir}/src/main/docker/</dockerFileDir>
+
+								<!--copies Jar to the maven directory (uses Assembly system) -->
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<tags>
+									<tag>latest</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 	<repositories>
 		<repository>
 			<id>spring-snapshots</id>
@@ -112,7 +160,6 @@ POM File--
 			</snapshots>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-snapshots</id>
@@ -131,24 +178,32 @@ POM File--
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-
 </project>
 
+# Properties File
 
-Properties File--
+--Application Name
+spring.application.name=spring-cloud-config-server
+-- Server port
+server.port=8888
 
---Application Name: spring.application.name=spring-cloud-config-server
-
---Server port: server.port=8888
-
---spring.cloud.config.server.git.uri=file:///home/numery/Desktop/SpringMIcroService/git-localconfig-repo
---Github URL to connect remote Repository
-
+-- spring.cloud.config.server.git.uri=file:///home/numery/Desktop/SpringMIcroService/git-localconfig-repo
+-- Github URL to connect remote Repository
 spring.cloud.config.server.git.uri=https://github.com/numery009/Github-Repository.git
+-- Serch path in the remote Repository
+spring.cloud.config.server.git.search-paths=customer-service
 
---Serch path in the remote Repository: spring.cloud.config.server.git.search-paths=customer-service
+# Docker File
 
+FROM openjdk:8u181-jdk-stretch
+
+MAINTAINER Numery Zaber "support@softwaredeveloper.com"
+
+EXPOSE 8888
+
+COPY maven/spring-cloud-config-server-0.0.1-SNAPSHOT.jar spring-cloud-config-server.jar 
+
+CMD ["java","-jar","spring-cloud-config-server.jar"]
 
 
 
