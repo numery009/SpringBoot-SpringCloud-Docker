@@ -289,3 +289,134 @@ Apart from these container we need to create 3 more container. Those are given b
 6) rabbitmq-server
 7) zipkin-server
 8) MySql Database
+
+
+Following is the maven plugin that will help us to build and create a Docker Image from a Spring-Boot application. We only need to add this maven plugin in the maven pom.xml file.
+
+<!-- Just add this to the <build><plugins> section of your POM and make changes appropriately -->
+
+<plugin>
+	<groupId>io.fabric8</groupId>
+	<artifactId>docker-maven-plugin</artifactId>
+	<version>0.21.0</version>
+
+	<configuration>
+        <!--  <dockerHost>http://127.0.0.1:2375</dockerHost> -->        
+        <!--  this is for Mac and Amazon Linux -->
+        <!-- <dockerHost>unix:///var/run/docker.sock</dockerHost> -->
+
+        <verbose>true</verbose>
+        
+        <!-- Needed if pushing to DockerHub: preferred to store these in local environment (see the course) -->
+        <authConfig>
+			  <username>YOUR-USERNAME</username>
+              <password>YOUR-PASSWORD</password>
+        </authConfig>
+        
+		<images>
+			<image>
+				<name>NAME OF IMAGE TO BUILD</name>
+				<build>
+					<dockerFileDir>${project.basedir}/src/main/docker/</dockerFileDir>
+
+                    <!--copies Jar to the maven directory (uses Assembly system)-->
+					<assembly>
+						<descriptorRef>artifact</descriptorRef>
+					</assembly>
+					<tags>
+						<tag>latest</tag>
+					</tags>
+				</build>
+			</image>
+		</images>
+	</configuration>
+</plugin>			
+
+# Docker Compose File
+
+version: "3"
+
+services: 
+
+   customer-service-mysql:
+      image: customer-service-mysql
+      networks: 
+         - customer-network
+      ports:
+         - 8080:8080    
+      depends_on:
+         - netflix-eureka-naming-server
+         - netflix-zuul-api-gateway-server
+         - spring-cloud-config-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server   
+
+   customer-account-mysql:
+      image: customer-account-mysql
+      networks: 
+         - customer-network
+      ports:
+         - 8100:8100
+      depends_on:
+         - netflix-eureka-naming-server
+         - netflix-zuul-api-gateway-server
+         - spring-cloud-config-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server
+
+   netflix-eureka-naming-server:
+      image: netflix-eureka-naming-server
+      networks: 
+         - customer-network
+      ports:
+         - 8761:8761
+
+   netflix-zuul-api-gateway-server:
+      image: netflix-zuul-api-gateway-server
+      networks: 
+         - customer-network
+      ports:
+         - 8765:8765
+      depends_on:
+         - netflix-eureka-naming-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server
+
+   spring-cloud-config-server:
+      image: spring-cloud-config-server
+      networks: 
+         - customer-network
+      ports:
+         - 8888:8888
+
+   rabbitmq-server:
+      image: "rabbitmq:3-management"
+      hostname: rabbitmq-server
+      networks:
+         - customer-network
+      ports:
+         - 5000:15672
+         - 500:5672
+
+   zipkin-server:
+      image: openzipkin/zipkin
+      networks:
+         - customer-network
+      ports:
+         - 9411:9411
+      environment:
+        RABBIT_ADDRESSES: rabbitmq-server
+
+
+   customer-database:
+      image: mysql:5
+      networks:
+         - customer-network
+      environment:
+         - MYSQL_ROOT_PASSWORD=rootpassword
+         - MYSQL_DATABASE=customerdatabase
+      volumes:
+         - /home/numery/Docker-Database/customer-database:/var/lib/mysql
+
+networks:
+   customer-network:
