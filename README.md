@@ -344,4 +344,4 @@ docker-compose up -d
 
 To stop the all the cotnainers
 
-docker-container down 
+docker-compose down 
