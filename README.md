@@ -267,4 +267,25 @@ public interface CustomerAccountMysqlServiceFeignnRibbonnZuul {
       4) Create new fallback method.
       
 
+# Welcome to the Docker World
+Docker needs no introduction. If you feel you still need a guide, feel free to take a look here at https://docs.docker.com/get-started/.
 
+Going forward, I assume that you have Docker CE installed on your machine. The concepts that we will be using here for deployment are as follows:
+
+Dockerfile: This is a text document which contains all the instructions needed to build a Docker image. Using the instruction set of a Dockerfile, we can write steps which will copy files, do installation, etc. For more references, please visit https://docs.docker.com/engine/reference/builder/.
+
+Docker Compose: This is a tool which can create and spawn multiple containers. It helps to build the required environment with a single command. 
+
+As shown in the microservice architecture diagram, we will be creating an individual container for each service. Below is the list of containers for our example:
+
+1) customer-account-mysql	
+2) customer-service-mysql	
+3) netflix-eureka-naming-server	
+4) netflix-zuul-api-gateway-server	
+5) spring-cloud-config-server
+
+Apart from these container we need to create 3 more container. Those are given below--
+
+6) rabbitmq-server
+7) zipkin-server
+8) MySql Database
