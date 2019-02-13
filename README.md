@@ -419,4 +419,4 @@ services:
          - /home/numery/Docker-Database/customer-database:/var/lib/mysql
 
 networks:
-   customer-network:
+   customer-network: 1
