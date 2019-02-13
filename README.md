@@ -335,3 +335,13 @@ Following is the maven plugin that will help us to build and create a Docker Ima
 # Docker Compose File
 
 https://github.com/numery009/SpringBoot-SpringCloud-Docker/blob/master/docker-compose.yml
+
+# Docker Compose Command
+
+Go to the directory where the docker compose file is. Open the terminal and run the following command for up and running all the containers.
+
+docker-compose up -d    
+
+To stop the all the cotnainers
+
+docker-container down 
