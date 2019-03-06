@@ -1,0 +1,86 @@
+version: "3"
+
+services: 
+
+   customer-service-mysql:
+      image: numery/customer-service-mysql
+      networks: 
+         - customer-network
+      ports:
+         - 8080:8080    
+      depends_on:
+         - netflix-eureka-naming-server
+         - netflix-zuul-api-gateway-server
+         - spring-cloud-config-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server   
+
+   customer-account-mysql:
+      image: numery/customer-account-mysql
+      networks: 
+         - customer-network
+      ports:
+         - 8100:8100
+      depends_on:
+         - netflix-eureka-naming-server
+         - netflix-zuul-api-gateway-server
+         - spring-cloud-config-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server
+
+   netflix-eureka-naming-server:
+      image: numery/netflix-eureka-naming-server
+      networks: 
+         - customer-network
+      ports:
+         - 8761:8761
+
+   netflix-zuul-api-gateway-server:
+      image: numery/netflix-zuul-api-gateway-server
+      networks: 
+         - customer-network
+      ports:
+         - 8765:8765
+      depends_on:
+         - netflix-eureka-naming-server
+      environment:
+         SPRING_RABBITMQ_HOST: rabbitmq-server
+
+   spring-cloud-config-server:
+      image: numery/spring-cloud-config-server
+      networks: 
+         - customer-network
+      ports:
+         - 8888:8888
+
+   rabbitmq-server:
+      image: "rabbitmq:3-management"
+      hostname: rabbitmq-server
+      networks:
+         - customer-network
+      ports:
+         - 5000:15672
+         - 500:5672
+
+   zipkin-server:
+      image: openzipkin/zipkin
+      networks:
+         - customer-network
+      ports:
+         - 9411:9411
+      environment:
+        RABBIT_ADDRESSES: rabbitmq-server
+
+
+   customer-database:
+      image: mysql:5
+      networks:
+         - customer-network
+      environment:
+         - MYSQL_ROOT_PASSWORD=rootpassword
+         - MYSQL_DATABASE=customerdatabase
+      volumes:
+         - /home/numery/Docker-Database/customer-database:/var/lib/mysql
+
+networks:
+   customer-network:
