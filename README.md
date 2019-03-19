@@ -270,6 +270,9 @@ public interface CustomerAccountMysqlServiceFeignnRibbonnZuul {
 # Deployment in Docker Containers
 Docker needs no introduction. If you feel you still need a guide, feel free to take a look here at https://docs.docker.com/get-started/.
 
+# Docker Installation Guide
+https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
 Going forward, I assume that you have Docker CE installed on your machine. The concepts that we will be using here for deployment are as follows:
 
 Dockerfile: This is a text document which contains all the instructions needed to build a Docker image. Using the instruction set of a Dockerfile, we can write steps which will copy files, do installation, etc. For more references, please visit https://docs.docker.com/engine/reference/builder/.
