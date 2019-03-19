@@ -80,7 +80,7 @@ services:
          - MYSQL_ROOT_PASSWORD=rootpassword
          - MYSQL_DATABASE=customerdatabase
       volumes:
-         - /home/numery/Docker-Database/customer-database:/var/lib/mysql
+         - /home/Docker-Database/customer-database:/var/lib/mysql
 
 networks:
    customer-network:
