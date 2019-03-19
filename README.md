@@ -352,9 +352,9 @@ docker-compose down
 
 # Run this project
 
-1) Install the Docker 
+1) Install the Docker CE.
 2) Create a directory "Docker-Database" on the path /home/Docker-Database.
 3) DownLoad the docker-compose.yml file in any directory.
-4) Open a terminal and go to the directory where docker-compose.yaml has saved.
-5) Run the command "docker-compose up -d"
-6) Hit all the URL mention in the URL table
+4) Open a terminal and go to the directory where docker-compose.yml has saved.
+5) Run the command "docker-compose up -d".
+6) Hit all the URL mention in the URLs table on the browser.
