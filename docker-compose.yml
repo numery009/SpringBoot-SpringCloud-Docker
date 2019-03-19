@@ -1,9 +1,8 @@
-version: "3"
+version: '3'
 
 services: 
-
    customer-service-mysql:
-      image: customer-service-mysql
+      image: numery/customer-service-mysql
       networks: 
          - customer-network
       ports:
@@ -12,11 +11,14 @@ services:
          - netflix-eureka-naming-server
          - netflix-zuul-api-gateway-server
          - spring-cloud-config-server
+         - customer-database
+         - rabbitmq-server
+         - zipkin-server
       environment:
          SPRING_RABBITMQ_HOST: rabbitmq-server   
 
    customer-account-mysql:
-      image: customer-account-mysql
+      image: numery/customer-account-mysql
       networks: 
          - customer-network
       ports:
@@ -25,18 +27,21 @@ services:
          - netflix-eureka-naming-server
          - netflix-zuul-api-gateway-server
          - spring-cloud-config-server
+         - customer-database
+         - rabbitmq-server
+         - zipkin-server
       environment:
          SPRING_RABBITMQ_HOST: rabbitmq-server
 
    netflix-eureka-naming-server:
-      image: netflix-eureka-naming-server
+      image: numery/netflix-eureka-naming-server
       networks: 
          - customer-network
       ports:
          - 8761:8761
 
    netflix-zuul-api-gateway-server:
-      image: netflix-zuul-api-gateway-server
+      image: numery/netflix-zuul-api-gateway-server
       networks: 
          - customer-network
       ports:
@@ -47,7 +52,7 @@ services:
          SPRING_RABBITMQ_HOST: rabbitmq-server
 
    spring-cloud-config-server:
-      image: spring-cloud-config-server
+      image: numery/spring-cloud-config-server
       networks: 
          - customer-network
       ports:
