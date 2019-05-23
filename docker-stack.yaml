@@ -2,7 +2,7 @@ version: '3'
 
 services: 
    customer-service-mysql:
-      image: numery/customer-service-mysql
+      image: numery/customer-service-mysql:latest
       networks: 
          - customer-network
       ports:
@@ -18,7 +18,7 @@ services:
          SPRING_RABBITMQ_HOST: rabbitmq-server   
 
    customer-account-mysql:
-      image: numery/customer-account-mysql
+      image: numery/customer-account-mysql:latest
       networks: 
          - customer-network
       ports:
@@ -34,14 +34,14 @@ services:
          SPRING_RABBITMQ_HOST: rabbitmq-server
 
    netflix-eureka-naming-server:
-      image: numery/netflix-eureka-naming-server
+      image: numery/netflix-eureka-naming-server:latest
       networks: 
          - customer-network
       ports:
          - 8761:8761
 
    netflix-zuul-api-gateway-server:
-      image: numery/netflix-zuul-api-gateway-server
+      image: numery/netflix-zuul-api-gateway-server:latest
       networks: 
          - customer-network
       ports:
@@ -52,7 +52,7 @@ services:
          SPRING_RABBITMQ_HOST: rabbitmq-server
 
    spring-cloud-config-server:
-      image: numery/spring-cloud-config-server
+      image: numery/spring-cloud-config-server:latest
       networks: 
          - customer-network
       ports:
@@ -84,9 +84,8 @@ services:
       environment:
          - MYSQL_ROOT_PASSWORD=rootpassword
          - MYSQL_DATABASE=customerdatabase
+      volumes:
+         - /home/numery/Docker-Database/customer-database:/var/lib/mysql
 
 networks:
    customer-network:
-      ipam:
-         config:
-            - subnet: 172.28.0.0/16
